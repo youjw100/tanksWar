@@ -28,7 +28,4 @@ public class TankModel extends JPanel{
 		super.paint(g);
 	}
 	
-	public static void main(String[] args) {
-
-	}
 }

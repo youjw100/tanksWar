@@ -2,35 +2,42 @@ package yjw.myGame.tanksWar.map;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Point;
-import java.awt.Toolkit;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Map extends JFrame{
+public class Map extends JPanel{
 
 	private static final long serialVersionUID = 6998589850664286325L;
 	
 	private Point point;
 	private Dimension dimension;
 	
-	public Map() {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.point = new Point(screenSize.width/10, screenSize.height/10);
-		this.dimension = new Dimension((int)(screenSize.width*0.8), (int)(screenSize.height*0.8));
+	public Map(Point point, Dimension dimension) {
+		this.point = point;
+		this.dimension = dimension;
 		
 		this.setLayout(null);
-		this.setBounds(point, dimension);
+		this.setBounds(this.point.x, this.point.y, this.dimension.width, this.dimension.height);
 		this.setBackground(Color.BLACK);
 		this.setVisible(true);
 	}
-	
-	private void setBounds(Point point, Dimension dimension) {
-		this.setBounds(point.x, point.y, dimension.width, dimension.height);
+
+	public Point getPoint() {
+		return point;
 	}
-	
-	public static void main(String[] args) {
-		Map a = new Map();
+
+	public void setPoint(Point point) {
+		this.point = point;
 	}
+
+	public Dimension getDimension() {
+		return dimension;
+	}
+
+	public void setDimension(Dimension dimension) {
+		this.dimension = dimension;
+	}
+
 }
