@@ -1,12 +1,12 @@
-package yjw.model;
+package yjw.myGame.tanksWar.model;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-import yjw.myEnum.DirectionEnum;
-import yjw.myEnum.TankTypeEnum;
+import yjw.myGame.tanksWar.myEnum.DirectionEnum;
+import yjw.myGame.tanksWar.myEnum.TankTypeEnum;
 
 public class TankModel extends JPanel{
 	

@@ -1,4 +1,4 @@
-package yjw.model;
+package yjw.myGame.tanksWar.model;
 
 public class ObstaclesModel {
 

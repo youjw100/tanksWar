@@ -1,4 +1,4 @@
-package yjw.myEnum;
+package yjw.myGame.tanksWar.myEnum;
 
 /**
  * ÕÏ°­Îï
