@@ -1,7 +1,7 @@
 package yjw.myGame.tanksWar.myEnum;
 
 /**
- * 障碍物
+ * 障碍物类型
  * 
  * WALL：墙壁
  * IRON：铁墙

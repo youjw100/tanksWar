@@ -2,7 +2,6 @@ package yjw.myGame.tanksWar.map;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Point;
 
 import javax.swing.JPanel;
@@ -23,7 +22,7 @@ public class Map extends JPanel{
 		this.setBackground(Color.BLACK);
 		this.setVisible(true);
 	}
-
+	
 	public Point getPoint() {
 		return point;
 	}
