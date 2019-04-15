@@ -8,7 +8,6 @@ import java.util.Random;
 
 import yjw.myGame.tanksWar.main.MainApp;
 import yjw.myGame.tanksWar.map.Map;
-import yjw.myGame.tanksWar.model.BorderModel;
 import yjw.myGame.tanksWar.model.BulletModel;
 import yjw.myGame.tanksWar.model.Model;
 import yjw.myGame.tanksWar.model.TankModel;
@@ -111,10 +110,10 @@ public class MyGameUtil {
 	 */
 	public static ArrayList<TankModel> getAllHero(MainApp mainApp) {
 		ArrayList<TankModel> allHero = new ArrayList<TankModel>();
-		if(mainApp.hero1.isLive()) {
+		if(mainApp.hero1 != null && mainApp.hero1.isLive()) {
 			allHero.add(mainApp.hero1);
 		}
-		if(mainApp.hero2.isLive()) {
+		if(mainApp.hero2 != null && mainApp.hero2.isLive()) {
 			allHero.add(mainApp.hero2);
 		}
 		return allHero;
@@ -126,16 +125,16 @@ public class MyGameUtil {
 	 */
 	public static ArrayList<TankModel> getAllEnemy(MainApp mainApp) {
 		ArrayList<TankModel> allEnemy = new ArrayList<TankModel>();
-		if(mainApp.enemy1.isLive()) {
+		if(mainApp.enemy1 != null && mainApp.enemy1.isLive()) {
 			allEnemy.add(mainApp.enemy1);
 		}
-		if(mainApp.enemy2.isLive()) {
+		if(mainApp.enemy2 != null && mainApp.enemy2.isLive()) {
 			allEnemy.add(mainApp.enemy2);
 		}
-		if(mainApp.enemy3.isLive()) {
+		if(mainApp.enemy3 != null && mainApp.enemy3.isLive()) {
 			allEnemy.add(mainApp.enemy3);
 		}
-		if(mainApp.enemy4.isLive()) {
+		if(mainApp.enemy4 != null && mainApp.enemy4.isLive()) {
 			allEnemy.add(mainApp.enemy4);
 		}
 		return allEnemy;
@@ -147,22 +146,22 @@ public class MyGameUtil {
 	 */
 	public static ArrayList<TankModel> getAllTank(MainApp mainApp) {
 		ArrayList<TankModel> allTank = new ArrayList<TankModel>();
-		if(mainApp.hero1.isLive()) {
+		if(mainApp.hero1 != null && mainApp.hero1.isLive()) {
 			allTank.add(mainApp.hero1);
 		}
-		if(mainApp.hero2.isLive()) {
+		if(mainApp.hero2 != null && mainApp.hero2.isLive()) {
 			allTank.add(mainApp.hero2);
 		}
-		if(mainApp.enemy1.isLive()) {
+		if(mainApp.enemy1 != null && mainApp.enemy1.isLive()) {
 			allTank.add(mainApp.enemy1);
 		}
-		if(mainApp.enemy2.isLive()) {
+		if(mainApp.enemy2 != null && mainApp.enemy2.isLive()) {
 			allTank.add(mainApp.enemy2);
 		}
-		if(mainApp.enemy3.isLive()) {
+		if(mainApp.enemy3 != null && mainApp.enemy3.isLive()) {
 			allTank.add(mainApp.enemy3);
 		}
-		if(mainApp.enemy4.isLive()) {
+		if(mainApp.enemy4 != null && mainApp.enemy4.isLive()) {
 			allTank.add(mainApp.enemy4);
 		}
 		return allTank;
@@ -255,52 +254,27 @@ public class MyGameUtil {
 		return false;
 	}
 	/**
-	 * 判断模型某个方向是否超出边界
+	 * 判断模型是否超出边界，如果超出，则复位
 	 * @param model
 	 * @param borderModel
 	 * @return
 	 */
-	public static boolean modelIsOuterBorder(Model model, BorderModel borderModel, DirectionEnum direction) {
-		Dimension modelDimension = model.getDimension();
-		//根据控件大小和位置，从左上角开始，顺时针获取model所有点的坐标
-		Point modelPoint1 = model.getPoint();
-		Point modelPoint2 = new Point(modelPoint1.x + modelDimension.width, modelPoint1.y);
-		Point modelPoint3 = new Point(modelPoint1.x + modelDimension.width, modelPoint1.y + modelDimension.height);
-		Point modelPoint4 = new Point(modelPoint1.x, modelPoint1.y + modelDimension.height);
-		
-		switch(direction) {
-		case UP:
-			model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
-			if(!isPointInModel(modelPoint1, borderModel) || !isPointInModel(modelPoint2, borderModel)) {
-				model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
-				return true;
-			}
-			model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
-			break;
-		case DOWN:
-			model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
-			if(!isPointInModel(modelPoint3, borderModel) || !isPointInModel(modelPoint4, borderModel)) {
-				model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
-				return true;
-			}
-			model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
-			break;
-		case LEFT:
-			model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
-			if(!isPointInModel(modelPoint1, borderModel) || !isPointInModel(modelPoint4, borderModel)) {
-				model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
-				return true;
-			}
-			model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
-			break;
-		case RIGHT:
-			model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
-			if(!isPointInModel(modelPoint2, borderModel) || !isPointInModel(modelPoint3, borderModel)) {
-				model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
-				return true;
-			}
-			model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
-			break;
+	public static boolean modelIsOuterBorder(Model model, DirectionEnum direction) {
+		if(direction == DirectionEnum.LEFT
+				&& model.getPoint().x - model.getMoveSize() < 0) {
+			return true;
+		} else if(direction == DirectionEnum.RIGHT
+				&& model.getPoint().x + model.getMoveSize() > model.getMap().getDimension().width - model.getDimension().width) {
+			model.setPoint(new Point(model.getMap().getDimension().width - model.getDimension().width, model.getPoint().y));
+			return true;
+		} else if(direction == DirectionEnum.UP
+				&& model.getPoint().y - model.getMoveSize() < 0) {
+			model.setPoint(new Point(model.getPoint().x, 0));
+			return true;
+		} else if(direction == DirectionEnum.DOWN
+				&& model.getPoint().y + model.getMoveSize() > model.getMap().getDimension().height - model.getDimension().height) {
+			model.setPoint(new Point(model.getPoint().x, model.getMap().getDimension().height - model.getDimension().height));
+			return true;
 		}
 		return false;
 	}

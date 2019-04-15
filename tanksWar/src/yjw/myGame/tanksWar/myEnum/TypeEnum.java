@@ -12,7 +12,6 @@ package yjw.myGame.tanksWar.myEnum;
  *
  */
 public enum TypeEnum {
-	BORDER,
 	FRIEND1, 
 	FRIEND2,
 	ENEMY1, 

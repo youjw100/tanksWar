@@ -42,9 +42,5 @@ public class Startup {
 		new Thread(mainApp.enemy3).start();
 		new Thread(mainApp.enemy4).start();
 		
-//		while(true) {
-//			Component[] allComponent = mainApp.map.getComponents();
-//			int a=1;
-//		}
 	}
 }

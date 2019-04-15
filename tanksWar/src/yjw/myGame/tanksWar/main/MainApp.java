@@ -181,20 +181,20 @@ public class MainApp  extends JFrame implements Runnable{
 			//定时清除游戏界面，并重绘
 			MyGameUtil.removeDeathModel(this);
 			//复位坦克模型
-			ArrayList<TankModel> allTank = MyGameUtil.getAllTank(this);
-			for(TankModel tank : allTank) {
-				if(tank != null && tank.isLive()) {
-					if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.UP)) {
-						tank.setPoint(new Point(tank.getPoint().x, 0));
-					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.DOWN)) {
-						tank.setPoint(new Point(tank.getPoint().x, tank.getMap().getDimension().height-tank.getDimension().height));
-					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.LEFT)) {
-						tank.setPoint(new Point(0, tank.getPoint().y));
-					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.RIGHT)) {
-						tank.setPoint(new Point(tank.getMap().getDimension().width-tank.getDimension().width, tank.getPoint().y));
-					}
-				}
-			}
+//			ArrayList<TankModel> allTank = MyGameUtil.getAllTank(this);
+//			for(TankModel tank : allTank) {
+//				if(tank != null && tank.isLive()) {
+//					if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.UP)) {
+//						tank.setPoint(new Point(tank.getPoint().x, 0));
+//					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.DOWN)) {
+//						tank.setPoint(new Point(tank.getPoint().x, tank.getMap().getDimension().height-tank.getDimension().height));
+//					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.LEFT)) {
+//						tank.setPoint(new Point(0, tank.getPoint().y));
+//					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.RIGHT)) {
+//						tank.setPoint(new Point(tank.getMap().getDimension().width-tank.getDimension().width, tank.getPoint().y));
+//					}
+//				}
+//			}
 			this.repaint();
 		}
 	}
