@@ -19,8 +19,6 @@ import yjw.myGame.tanksWar.myEnum.TypeEnum;
  */
 public class TankModel extends Model implements Runnable{
 	private static final long serialVersionUID = 4503796111367164433L;
-	//坦克一次移动距离（根据坦克大小确定）
-	private int moveSize;
 	//是否是敌方坦克
 	private boolean isEnemy;
 	//坦克的方向
@@ -36,7 +34,7 @@ public class TankModel extends Model implements Runnable{
 		this.point = point;
 		this.dimension = dimension;
 		this.map = map;
-		this.moveSize = dimension.width/10;
+		this.setMoveSize(dimension.width/10);
 		//坦克弹夹容量设置为2发
 		this.bulletNum = 2;
 		this.setLive(true);
@@ -140,20 +138,6 @@ public class TankModel extends Model implements Runnable{
 				}
 			}
 		}
-	}
-
-	@Override
-	protected boolean allowMove(Model model) {
-		
-		return false;
-	}
-
-	public int getMoveSize() {
-		return moveSize;
-	}
-
-	public void setMoveSize(int moveSize) {
-		this.moveSize = moveSize;
 	}
 
 	public DirectionEnum getDirection() {

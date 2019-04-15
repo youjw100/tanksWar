@@ -1,7 +1,5 @@
 package yjw.myGame.tanksWar;
 
-import java.awt.Component;
-
 import yjw.myGame.tanksWar.main.MainApp;
 import yjw.myGame.tanksWar.myEnum.TypeEnum;
 import yjw.myGame.tanksWar.util.MyGameUtil;
@@ -20,11 +18,13 @@ public class Startup {
 		
 		//初始化我方坦克
 		mainApp.hero1 = MyGameUtil.getHero(mainApp.map, TypeEnum.FRIEND1);
-//		mainApp.hero2 = MyGameUtil.getHero(mainApp.map, TypeEnum.FRIEND2);
+		mainApp.hero2 = MyGameUtil.getHero(mainApp.map, TypeEnum.FRIEND2);
 		//将我方坦克加入游戏界面中
 		mainApp.map.add(mainApp.hero1);
+		mainApp.map.add(mainApp.hero2);
 		//控制我方坦克
-		mainApp.controlTankListener(mainApp);
+		mainApp.controlTankListener(mainApp, mainApp.hero1.getType());
+		mainApp.controlTankListener(mainApp, mainApp.hero2.getType());
 		
 		//初始化敌方坦克
 		mainApp.enemy1 = MyGameUtil.getEnemy(mainApp.map);

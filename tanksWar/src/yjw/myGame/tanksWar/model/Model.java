@@ -14,22 +14,24 @@ import yjw.myGame.tanksWar.myEnum.TypeEnum;
  * @author 梦有形心有伴
  *
  */
-public abstract class Model extends JPanel{
+public class Model extends JPanel{
 
 	private static final long serialVersionUID = 8056762727232848866L;
 
-	//位置
+	//模型位置
 	protected Point point;
-	//大小
+	//模型大小
 	protected Dimension dimension;
-	//颜色
+	//模型颜色
 	protected Color color;
-	//类型
+	//模型类型
 	protected TypeEnum type;
-	//是否存活
+	//模型是否存活
 	protected boolean isLive;
-	//所属的游戏空间
+	//模型所属的游戏空间
 	protected Map map;
+	//模型一次移动距离（根据模型大小确定）
+	protected int moveSize;
 	
 	public Model() {
 		
@@ -42,8 +44,6 @@ public abstract class Model extends JPanel{
 		this.isLive = isLive;
 		this.map = map;
 	}
-	
-	protected abstract boolean allowMove(Model model);
 	
 	public Point getPoint() {
 		return point;
@@ -92,6 +92,14 @@ public abstract class Model extends JPanel{
 
 	public void setMap(Map map) {
 		this.map = map;
+	}
+
+	public int getMoveSize() {
+		return moveSize;
+	}
+
+	public void setMoveSize(int moveSize) {
+		this.moveSize = moveSize;
 	}
 	
 }

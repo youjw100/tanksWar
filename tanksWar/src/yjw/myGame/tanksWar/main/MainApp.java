@@ -5,12 +5,14 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
 import yjw.myGame.tanksWar.control.ControlListener;
 import yjw.myGame.tanksWar.map.Map;
 import yjw.myGame.tanksWar.model.TankModel;
+import yjw.myGame.tanksWar.myEnum.DirectionEnum;
 import yjw.myGame.tanksWar.myEnum.TypeEnum;
 import yjw.myGame.tanksWar.util.MyGameUtil;
 
@@ -87,7 +89,7 @@ public class MainApp  extends JFrame implements Runnable{
 	 * 控制我方坦克
 	 * @param mainApp
 	 */
-	public void controlTankListener(MainApp mainApp) {
+	public void controlTankListener(MainApp mainApp, TypeEnum type) {
 		this.addKeyListener(new KeyAdapter() {
 			//我方坦克的移动监听
 			ControlListener hero1MoveListrner = new ControlListener(mainApp.hero1);
@@ -96,7 +98,8 @@ public class MainApp  extends JFrame implements Runnable{
 			Thread controlHero2 = new Thread(hero2MoveListrner);
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(mainApp.hero1 != null && mainApp.hero1.isLive()) {
+				if(type == TypeEnum.FRIEND1 
+						&& mainApp.hero1 != null && mainApp.hero1.isLive()) {
 					if(KeyEvent.VK_W == e.getKeyCode()
 							|| KeyEvent.VK_S == e.getKeyCode()
 							|| KeyEvent.VK_A == e.getKeyCode()   
@@ -119,7 +122,8 @@ public class MainApp  extends JFrame implements Runnable{
 						}
 					}
 				}
-				if(mainApp.hero2 != null && mainApp.hero2.isLive()) {
+				if(type == TypeEnum.FRIEND2 
+						&& mainApp.hero2 != null && mainApp.hero2.isLive()) {
 					if(KeyEvent.VK_UP == e.getKeyCode()
 							|| KeyEvent.VK_DOWN == e.getKeyCode()
 							|| KeyEvent.VK_LEFT == e.getKeyCode()
@@ -144,7 +148,8 @@ public class MainApp  extends JFrame implements Runnable{
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(mainApp.hero1 != null && mainApp.hero1.isLive()) {
+				if(type == TypeEnum.FRIEND1 
+						&& mainApp.hero1 != null && mainApp.hero1.isLive()) {
 					if(KeyEvent.VK_W == e.getKeyCode()
 							|| KeyEvent.VK_S == e.getKeyCode()
 							|| KeyEvent.VK_A == e.getKeyCode()
@@ -152,7 +157,8 @@ public class MainApp  extends JFrame implements Runnable{
 						mainApp.hero1.setConMove(false);
 					}
 				}
-				if(mainApp.hero2 != null && mainApp.hero2.isLive()) {
+				if(type == TypeEnum.FRIEND2
+						&& mainApp.hero2 != null && mainApp.hero2.isLive()) {
 					if(KeyEvent.VK_UP == e.getKeyCode()
 							|| KeyEvent.VK_DOWN == e.getKeyCode()
 							|| KeyEvent.VK_LEFT == e.getKeyCode()
@@ -172,7 +178,23 @@ public class MainApp  extends JFrame implements Runnable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			//定时清除游戏界面，并重绘
 			MyGameUtil.removeDeathModel(this);
+			//复位坦克模型
+			ArrayList<TankModel> allTank = MyGameUtil.getAllTank(this);
+			for(TankModel tank : allTank) {
+				if(tank != null && tank.isLive()) {
+					if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.UP)) {
+						tank.setPoint(new Point(tank.getPoint().x, 0));
+					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.DOWN)) {
+						tank.setPoint(new Point(tank.getPoint().x, tank.getMap().getDimension().height-tank.getDimension().height));
+					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.LEFT)) {
+						tank.setPoint(new Point(0, tank.getPoint().y));
+					} else if(MyGameUtil.modelIsOuterBorder(tank, this.map.borderModel, DirectionEnum.RIGHT)) {
+						tank.setPoint(new Point(tank.getMap().getDimension().width-tank.getDimension().width, tank.getPoint().y));
+					}
+				}
+			}
 			this.repaint();
 		}
 	}

@@ -41,7 +41,8 @@ public class BulletModel extends Model implements Runnable{
 		case RIGHT:
 			this.point = new Point(this.tank.getPoint().x + this.tank.getDimension().width - this.dimension.width, this.tank.getPoint().y + this.tank.getDimension().height/2 - this.dimension.height/2);break;
 		}
-		
+
+		this.moveSize = this.dimension.width;
 		this.isLive = true;
 		this.setLayout(null);
 		this.setBounds(this.point.x, this.point.y, this.dimension.width, this.dimension.height);
@@ -72,22 +73,15 @@ public class BulletModel extends Model implements Runnable{
 			}
 			switch(direction) {
 			case UP:
-				this.point = new Point(this.point.x, this.point.y - this.dimension.height);break;
+				this.setPoint(new Point(this.point.x, this.point.y - this.moveSize));break;
 			case DOWN:
-				this.point = new Point(this.point.x, this.point.y + this.dimension.height);break;
+				this.setPoint(new Point(this.point.x, this.point.y + this.moveSize));break;
 			case LEFT:
-				this.point = new Point(this.point.x - this.dimension.width, this.point.y);break;
+				this.setPoint(new Point(this.point.x - this.moveSize, this.point.y));break;
 			case RIGHT:
-				this.point = new Point(this.point.x + this.dimension.width, this.point.y);break;
+				this.setPoint(new Point(this.point.x + this.moveSize, this.point.y));break;
 			}
-			this.setBounds(this.point.x, this.point.y, this.dimension.width, this.dimension.height);
 		}
-	}
-
-	@Override
-	protected boolean allowMove(Model model) {
-		
-		return false;
 	}
 	
 	public boolean isEnemy() {

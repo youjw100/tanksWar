@@ -3,9 +3,11 @@ package yjw.myGame.tanksWar.control;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 
+import yjw.myGame.tanksWar.model.BorderModel;
 import yjw.myGame.tanksWar.model.TankModel;
 import yjw.myGame.tanksWar.myEnum.DirectionEnum;
 import yjw.myGame.tanksWar.myEnum.TypeEnum;
+import yjw.myGame.tanksWar.util.MyGameUtil;
 
 public class ControlListener implements Runnable{
 	
@@ -27,30 +29,55 @@ public class ControlListener implements Runnable{
 		if(type == TypeEnum.FRIEND1) {
 			if(KeyEvent.VK_W == event.getKeyCode()) {
 				direction = DirectionEnum.UP;
-				point.y = point.y - moveSize;
+				//坦克是否碰撞到其他model
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.UP)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.UP) == null) {
+					point.y = point.y - moveSize;
+				}
 			} else if(KeyEvent.VK_S == event.getKeyCode()) {
 				direction = DirectionEnum.DOWN;
-				point.y = point.y + moveSize;
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.DOWN)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.DOWN) == null) {
+					point.y = point.y + moveSize;
+				}
 			} else if(KeyEvent.VK_A == event.getKeyCode()) {
 				direction = DirectionEnum.LEFT;
-				point.x = point.x - moveSize;
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.LEFT)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.LEFT) == null) {
+					point.x = point.x - moveSize;
+				}
 			} else if(KeyEvent.VK_D == event.getKeyCode()) {
 				direction = DirectionEnum.RIGHT;
-				point.x = point.x + moveSize;
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.RIGHT)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.RIGHT) == null) {
+					point.x = point.x + moveSize;
+				}
 			}
 		} else {
 			if(KeyEvent.VK_UP == event.getKeyCode()) {
 				direction = DirectionEnum.UP;
-				point.y = point.y - moveSize;
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.UP)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.UP) == null) {
+					point.y = point.y - moveSize;
+				}
 			} else if(KeyEvent.VK_DOWN == event.getKeyCode()) {
 				direction = DirectionEnum.DOWN;
-				point.y = point.y + moveSize;
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.DOWN)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.DOWN) == null) {
+					point.y = point.y + moveSize;
+				}
 			} else if(KeyEvent.VK_LEFT == event.getKeyCode()) {
 				direction = DirectionEnum.LEFT;
-				point.x = point.x - moveSize;
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.LEFT)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.LEFT) == null) {
+					point.x = point.x - moveSize;
+				}
 			} else if(KeyEvent.VK_RIGHT == event.getKeyCode()) {
 				direction = DirectionEnum.RIGHT;
-				point.x = point.x + moveSize;
+				if(!MyGameUtil.modelIsOuterBorder(tank, new BorderModel(tank.getMap()), DirectionEnum.RIGHT)
+						&& MyGameUtil.collisionModel(tank, DirectionEnum.RIGHT) == null) {
+					point.x = point.x + moveSize;
+				}
 			}
 		}
 		tank.setPoint(point);
@@ -66,10 +93,22 @@ public class ControlListener implements Runnable{
 		DirectionEnum direction = tank.getDirection();
 		if(tank.isEnemy()) {
 			switch (direction) {
-			case UP: point.y = point.y - moveSize; break;
-			case DOWN: point.y = point.y + moveSize; break;
-			case LEFT: point.x = point.x - moveSize; break;
-			case RIGHT: point.x = point.x + moveSize; break;
+			case UP:
+				if(MyGameUtil.collisionModel(tank, DirectionEnum.UP) == null) {
+					point.y = point.y - moveSize;
+				} break;
+			case DOWN:
+				if(MyGameUtil.collisionModel(tank, DirectionEnum.DOWN) == null) {
+					point.y = point.y + moveSize;
+				} break;
+			case LEFT:
+				if(MyGameUtil.collisionModel(tank, DirectionEnum.LEFT) == null) {
+					point.x = point.x - moveSize;
+				} break;
+			case RIGHT:
+				if(MyGameUtil.collisionModel(tank, DirectionEnum.RIGHT) == null) {
+					point.x = point.x + moveSize;
+				} break;
 			}
 			tank.setPoint(point);
 		}

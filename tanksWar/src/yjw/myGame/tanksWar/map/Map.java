@@ -6,12 +6,15 @@ import java.awt.Point;
 
 import javax.swing.JPanel;
 
+import yjw.myGame.tanksWar.model.BorderModel;
+
 public class Map extends JPanel{
 
 	private static final long serialVersionUID = 6998589850664286325L;
 	
 	private Point point;
 	private Dimension dimension;
+	public BorderModel borderModel;
 	
 	public Map(Point point, Dimension dimension) {
 		this.point = point;
@@ -21,6 +24,7 @@ public class Map extends JPanel{
 		this.setBounds(this.point.x, this.point.y, this.dimension.width, this.dimension.height);
 		this.setBackground(Color.BLACK);
 		this.setVisible(true);
+		borderModel = new BorderModel(this);
 	}
 	
 	public Point getPoint() {

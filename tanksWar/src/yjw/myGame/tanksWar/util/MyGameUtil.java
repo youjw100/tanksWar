@@ -8,9 +8,11 @@ import java.util.Random;
 
 import yjw.myGame.tanksWar.main.MainApp;
 import yjw.myGame.tanksWar.map.Map;
+import yjw.myGame.tanksWar.model.BorderModel;
 import yjw.myGame.tanksWar.model.BulletModel;
 import yjw.myGame.tanksWar.model.Model;
 import yjw.myGame.tanksWar.model.TankModel;
+import yjw.myGame.tanksWar.myEnum.DirectionEnum;
 import yjw.myGame.tanksWar.myEnum.TypeEnum;
 
 public class MyGameUtil {
@@ -179,5 +181,127 @@ public class MyGameUtil {
 				}
 			}
 		}
+	}
+	/**
+	 * 在游戏空间map内判断某个model在某个方向上是否有障碍物
+	 * @param map
+	 * @param model
+	 * @param direction
+	 * @return collisionModel 如果返回值为null，则代表没有障碍物
+	 */
+	public static Model collisionModel(Model model, DirectionEnum direction) {
+		Model collisionModel = null;
+		//获取游戏空间map中的所有组件，并且遍历判断
+		Component[] allComponent = model.getMap().getComponents();
+		for(Component component : allComponent) {
+			if(component != null) {
+				Model tempModel = (Model)component;
+				Dimension tempDimension = tempModel.getDimension();
+				//根据控件大小和位置，从左上角开始，顺时针获取tempModel所有点的坐标
+				Point tempPoint1 = tempModel.getPoint();
+				Point tempPoint2 = new Point(tempPoint1.x + tempDimension.width, tempPoint1.y);
+				Point tempPoint3 = new Point(tempPoint1.x + tempDimension.width, tempPoint1.y + tempDimension.height);
+				Point tempPoint4 = new Point(tempPoint1.x, tempPoint1.y + tempDimension.height);
+				switch(direction) {
+				case UP:
+					model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
+					if(isPointInModel(tempPoint3, model) || isPointInModel(tempPoint4, model)) {
+						collisionModel = tempModel;
+					} 
+					model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
+					break;
+				case DOWN:
+					model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
+					if(isPointInModel(tempPoint1, model) || isPointInModel(tempPoint2, model)) {
+						collisionModel = tempModel;
+					} 
+					model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
+					break;
+				case LEFT:
+					model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
+					if(isPointInModel(tempPoint2, model) || isPointInModel(tempPoint3, model)) {
+						collisionModel = tempModel;
+					} 
+					model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
+					break;
+				case RIGHT:
+					model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
+					if(isPointInModel(tempPoint1, model) || isPointInModel(tempPoint4, model)) {
+						collisionModel = tempModel;
+					} 
+					model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
+					break;
+				}
+			}
+			if(collisionModel != null) {
+				return collisionModel;
+			}
+		}
+		return collisionModel;
+	}
+	/**
+	 * 判断点是否在model内
+	 * @param point
+	 * @param model
+	 * @return
+	 */
+	public static boolean isPointInModel(Point point, Model model) {
+		Point modelPoint = model.getPoint();
+		Dimension modelDimension = model.getDimension();
+		if(point.x >= modelPoint.x && point.x <= modelPoint.x + modelDimension.width
+				&& point.y >= modelPoint.y && point.y <= modelPoint.y + modelDimension.height) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 判断模型某个方向是否超出边界
+	 * @param model
+	 * @param borderModel
+	 * @return
+	 */
+	public static boolean modelIsOuterBorder(Model model, BorderModel borderModel, DirectionEnum direction) {
+		Dimension modelDimension = model.getDimension();
+		//根据控件大小和位置，从左上角开始，顺时针获取model所有点的坐标
+		Point modelPoint1 = model.getPoint();
+		Point modelPoint2 = new Point(modelPoint1.x + modelDimension.width, modelPoint1.y);
+		Point modelPoint3 = new Point(modelPoint1.x + modelDimension.width, modelPoint1.y + modelDimension.height);
+		Point modelPoint4 = new Point(modelPoint1.x, modelPoint1.y + modelDimension.height);
+		
+		switch(direction) {
+		case UP:
+			model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
+			if(!isPointInModel(modelPoint1, borderModel) || !isPointInModel(modelPoint2, borderModel)) {
+				model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
+				return true;
+			}
+			model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
+			break;
+		case DOWN:
+			model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
+			if(!isPointInModel(modelPoint3, borderModel) || !isPointInModel(modelPoint4, borderModel)) {
+				model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
+				return true;
+			}
+			model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
+			break;
+		case LEFT:
+			model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
+			if(!isPointInModel(modelPoint1, borderModel) || !isPointInModel(modelPoint4, borderModel)) {
+				model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
+				return true;
+			}
+			model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
+			break;
+		case RIGHT:
+			model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
+			if(!isPointInModel(modelPoint2, borderModel) || !isPointInModel(modelPoint3, borderModel)) {
+				model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
+				return true;
+			}
+			model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
+			break;
+		}
+		return false;
 	}
 }
