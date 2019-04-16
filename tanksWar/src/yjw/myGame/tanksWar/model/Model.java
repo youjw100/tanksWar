@@ -101,5 +101,5 @@ public class Model extends JPanel{
 	public void setMoveSize(int moveSize) {
 		this.moveSize = moveSize;
 	}
-	
+
 }

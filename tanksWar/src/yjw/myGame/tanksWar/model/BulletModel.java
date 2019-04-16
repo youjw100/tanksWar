@@ -8,6 +8,7 @@ import java.awt.Point;
 import yjw.myGame.tanksWar.map.Map;
 import yjw.myGame.tanksWar.myEnum.DirectionEnum;
 import yjw.myGame.tanksWar.myEnum.TypeEnum;
+import yjw.myGame.tanksWar.util.MyGameUtil;
 
 /**
  * ×Óµ¯Ä£ÐÍ
@@ -65,6 +66,17 @@ public class BulletModel extends Model implements Runnable{
 					|| this.point.y < -this.dimension.height || this.point.y > this.map.getDimension().getHeight() + this.dimension.height) {
 				this.setLive(false);
 				this.tank.setBulletNum(this.tank.getBulletNum() + 1);
+			}
+			Model collisionModel = MyGameUtil.collisionModel(this, this.direction);
+			if(collisionModel != null) {
+				this.setLive(false);
+				this.tank.setBulletNum(this.tank.getBulletNum() + 1);
+				if(collisionModel instanceof TankModel) {
+					TankModel collisionTank = (TankModel)collisionModel;
+					if(this.isEnemy() && !collisionTank.isEnemy()) {
+						collisionTank.setLive(false);
+					}
+				}
 			}
 			try {
 				Thread.sleep(50);
