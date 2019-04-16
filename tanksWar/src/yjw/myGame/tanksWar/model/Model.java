@@ -33,16 +33,18 @@ public class Model extends JPanel{
 	//模型一次移动距离（根据模型大小确定）
 	protected int moveSize;
 	
-	public Model() {
-		
-	}
-	
-	public Model(Point point, Dimension dimension, Color color, boolean isLive, Map map) {
+	public Model(Point point, Dimension dimension, TypeEnum type, Map map, int moveSize) {
 		this.point = point;
 		this.dimension = dimension;
-		this.color = color;
-		this.isLive = isLive;
+		this.type = type;
 		this.map = map;
+		this.moveSize = moveSize;
+		this.isLive = true;
+		
+		this.setLayout(null);
+		this.setBounds(this.point.x, this.point.y, this.dimension.width, this.dimension.height);
+		this.setBackground(Color.BLACK);
+		this.setVisible(true);
 	}
 	
 	public Point getPoint() {

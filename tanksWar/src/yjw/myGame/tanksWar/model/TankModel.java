@@ -31,13 +31,11 @@ public class TankModel extends Model implements Runnable{
 	private int bulletNum;
 	
 	public TankModel(Point point, Dimension dimension, TypeEnum type, Map map) {
-		this.point = point;
-		this.dimension = dimension;
-		this.map = map;
-		this.setMoveSize(dimension.width/10);
+		
+		super(point, dimension, type, map, dimension.width/10);
+		
 		//坦克弹夹容量设置为2发
 		this.bulletNum = 2;
-		this.setLive(true);
 		//设置坦克类型，并根据坦克类型设置颜色
 		this.setType(type);
 		if(this.type == TypeEnum.FRIEND1 || this.type == TypeEnum.FRIEND2) {
@@ -50,11 +48,7 @@ public class TankModel extends Model implements Runnable{
 		} else {
 			this.direction = DirectionEnum.UP;
 		}
-
-		this.setLayout(null);
-		this.setBounds(this.point.x, this.point.y, this.dimension.width, this.dimension.height);
-		this.setBackground(Color.BLACK);
-		this.setVisible(true);
+		
 	}
 	
 	@Override

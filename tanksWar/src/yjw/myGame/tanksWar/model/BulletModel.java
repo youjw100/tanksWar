@@ -1,6 +1,7 @@
 package yjw.myGame.tanksWar.model;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -25,11 +26,11 @@ public class BulletModel extends Model implements Runnable{
 	private TankModel tank;
 	
 	public BulletModel(TankModel tank, Map map) {
-		this.tank = tank;
-		this.map = map;
-		this.setType(TypeEnum.BULLET);
 		
-		this.dimension = new Dimension(this.tank.getDimension().width/4, this.tank.getDimension().height/4);
+		super(null, new Dimension(tank.getDimension().width/4, tank.getDimension().height/4), TypeEnum.BULLET, map, tank.getDimension().width/4);
+		
+		this.tank = tank;
+		
 		this.direction = this.tank.getDirection();
 		this.setColor(this.tank.getColor());
 		switch (this.direction) {
@@ -42,13 +43,6 @@ public class BulletModel extends Model implements Runnable{
 		case RIGHT:
 			this.point = new Point(this.tank.getPoint().x + this.tank.getDimension().width - this.dimension.width, this.tank.getPoint().y + this.tank.getDimension().height/2 - this.dimension.height/2);break;
 		}
-
-		this.moveSize = this.dimension.width;
-		this.isLive = true;
-		this.setLayout(null);
-		this.setBounds(this.point.x, this.point.y, this.dimension.width, this.dimension.height);
-		this.setBackground(Color.BLACK);
-		this.setVisible(true);
 	}
 
 	@Override
@@ -72,10 +66,7 @@ public class BulletModel extends Model implements Runnable{
 				this.setLive(false);
 				this.tank.setBulletNum(this.tank.getBulletNum() + 1);
 				if(collisionModel instanceof TankModel) {
-					TankModel collisionTank = (TankModel)collisionModel;
-					if(this.isEnemy() && !collisionTank.isEnemy()) {
-						collisionTank.setLive(false);
-					}
+					
 				}
 			}
 			try {

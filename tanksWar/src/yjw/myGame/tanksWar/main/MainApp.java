@@ -58,7 +58,7 @@ public class MainApp  extends JFrame implements Runnable{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		//根据屏幕参数计算主界面大小及位置
 		Point mainPoint = new Point(screenSize.width/10, screenSize.height/10);
-		Dimension mainDimension = new Dimension((int)(screenSize.width*0.8), (int)(screenSize.height*0.8));
+		Dimension mainDimension = new Dimension((int)(screenSize.width*0.3), (int)(screenSize.height*0.3));
 		//创建主界面并初始化
 		MainApp mainApp = new MainApp(mainPoint, mainDimension);
 		//调整主界面大小及位置
