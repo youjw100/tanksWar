@@ -6,7 +6,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
-import yjw.myGame.tanksWar.main.MainApp;
 import yjw.myGame.tanksWar.map.Map;
 import yjw.myGame.tanksWar.model.BulletModel;
 import yjw.myGame.tanksWar.model.Model;
@@ -84,20 +83,36 @@ public class MyGameUtil {
 		return enemy;
 	}
 	/**
+	 * 获取所有坦克
+	 * @param mainApp
+	 * @return
+	 */
+	public static ArrayList<TankModel> getAllTank(Map map) {
+		ArrayList<TankModel> allTank = new ArrayList<TankModel>();
+		Component[] allComponent = map.getComponents();
+		for(Component component : allComponent) {
+			if(component != null && component instanceof TankModel) {
+				TankModel tank = (TankModel)component;
+				if(tank.isLive()) {
+					allTank.add(tank);
+				}
+			}
+		}
+		return allTank;
+	}
+	/**
 	 * 获取游戏空间中的所有子弹
 	 * @param mainApp
 	 * @return
 	 */
 	public static ArrayList<BulletModel> getAllBullet(Map map) {
-		Component[] allComponent = map.getComponents();
 		ArrayList<BulletModel> allBullet = new ArrayList<BulletModel>();
+		Component[] allComponent = map.getComponents();
 		for(Component component : allComponent) {
-			if(component != null) {
-				Model model = (Model)component;
-				if(model.isLive()) {
-					if(model.getType() == TypeEnum.BULLET) {
-						allBullet.add((BulletModel) model);
-					}
+			if(component != null && component instanceof BulletModel) {
+				BulletModel bullet = (BulletModel)component;
+				if(bullet.isLive()) {
+					allBullet.add(bullet);
 				}
 			}
 		}
@@ -108,13 +123,13 @@ public class MyGameUtil {
 	 * @param mainApp
 	 * @return
 	 */
-	public static ArrayList<TankModel> getAllHero(MainApp mainApp) {
+	public static ArrayList<TankModel> getAllHero(Map map) {
 		ArrayList<TankModel> allHero = new ArrayList<TankModel>();
-		if(mainApp.hero1 != null && mainApp.hero1.isLive()) {
-			allHero.add(mainApp.hero1);
-		}
-		if(mainApp.hero2 != null && mainApp.hero2.isLive()) {
-			allHero.add(mainApp.hero2);
+		ArrayList<TankModel> allTank = getAllTank(map);
+		for(TankModel hero : allTank) {
+			if(hero != null && hero.isLive() && !hero.isEnemy()) {
+				allHero.add(hero);
+			}
 		}
 		return allHero;
 	}
@@ -123,117 +138,85 @@ public class MyGameUtil {
 	 * @param mainApp
 	 * @return
 	 */
-	public static ArrayList<TankModel> getAllEnemy(MainApp mainApp) {
+	public static ArrayList<TankModel> getAllEnemy(Map map) {
 		ArrayList<TankModel> allEnemy = new ArrayList<TankModel>();
-		if(mainApp.enemy1 != null && mainApp.enemy1.isLive()) {
-			allEnemy.add(mainApp.enemy1);
-		}
-		if(mainApp.enemy2 != null && mainApp.enemy2.isLive()) {
-			allEnemy.add(mainApp.enemy2);
-		}
-		if(mainApp.enemy3 != null && mainApp.enemy3.isLive()) {
-			allEnemy.add(mainApp.enemy3);
-		}
-		if(mainApp.enemy4 != null && mainApp.enemy4.isLive()) {
-			allEnemy.add(mainApp.enemy4);
+		ArrayList<TankModel> allTank = getAllTank(map);
+		for(TankModel enemy : allTank) {
+			if(enemy != null && enemy.isLive() && enemy.isEnemy()) {
+				allEnemy.add(enemy);
+			}
 		}
 		return allEnemy;
-	}
-	/**
-	 * 获取所有坦克
-	 * @param mainApp
-	 * @return
-	 */
-	public static ArrayList<TankModel> getAllTank(MainApp mainApp) {
-		ArrayList<TankModel> allTank = new ArrayList<TankModel>();
-		if(mainApp.hero1 != null && mainApp.hero1.isLive()) {
-			allTank.add(mainApp.hero1);
-		}
-		if(mainApp.hero2 != null && mainApp.hero2.isLive()) {
-			allTank.add(mainApp.hero2);
-		}
-		if(mainApp.enemy1 != null && mainApp.enemy1.isLive()) {
-			allTank.add(mainApp.enemy1);
-		}
-		if(mainApp.enemy2 != null && mainApp.enemy2.isLive()) {
-			allTank.add(mainApp.enemy2);
-		}
-		if(mainApp.enemy3 != null && mainApp.enemy3.isLive()) {
-			allTank.add(mainApp.enemy3);
-		}
-		if(mainApp.enemy4 != null && mainApp.enemy4.isLive()) {
-			allTank.add(mainApp.enemy4);
-		}
-		return allTank;
 	}
 	/**
 	 * 清除游戏界面死亡的模型
 	 * @param mainApp
 	 */
-	public static void removeDeathModel(MainApp mainApp) {
-		Component[] allComponent = mainApp.map.getComponents();
+	public static void removeDeathModel(Map map) {
+		Component[] allComponent = map.getComponents();
 		for(Component component : allComponent) {
-			if(component != null) {
+			if(component != null && component instanceof Model) {
 				Model model = (Model)component;
 				if(!model.isLive()) {
-					mainApp.map.remove(model);
+					map.remove(model);
 				}
 			}
 		}
 	}
 	/**
-	 * 在游戏空间map内判断某个model在某个方向上是否有障碍物
+	 * 在游戏空间map内判断某个checkModel在某个方向上是否有model
 	 * @param map
 	 * @param model
 	 * @param direction
 	 * @return collisionModel 如果返回值为null，则代表没有障碍物
 	 */
-	public static Model collisionModel(Model model, DirectionEnum direction) {
+	public static Model collisionModel(Model checkModel, DirectionEnum direction) {
+		Dimension modelDimension = checkModel.getDimension();
 		Model collisionModel = null;
 		//获取游戏空间map中的所有组件，并且遍历判断
-		Component[] allComponent = model.getMap().getComponents();
+		Component[] allComponent = checkModel.getMap().getComponents();
 		for(Component component : allComponent) {
-			if(component != null) {
+			if(component != null && component instanceof Model) {
 				Model tempModel = (Model)component;
-				Dimension tempDimension = tempModel.getDimension();
-				//根据控件大小和位置，从左上角开始，顺时针获取tempModel所有点的坐标
-				Point tempPoint1 = tempModel.getPoint();
-				Point tempPoint2 = new Point(tempPoint1.x + tempDimension.width, tempPoint1.y);
-				Point tempPoint3 = new Point(tempPoint1.x + tempDimension.width, tempPoint1.y + tempDimension.height);
-				Point tempPoint4 = new Point(tempPoint1.x, tempPoint1.y + tempDimension.height);
+				if(isSameModel(checkModel, tempModel)) {
+					continue;
+				}
+				//根据checkModel大小和位置，从左上角开始，顺时针获取checkModel所有点的坐标
+				int moveSize = checkModel.getMoveSize();
+				Point checkModelPoint1 = checkModel.getPoint();
+				Point checkModelPoint2 = new Point(checkModelPoint1.x + modelDimension.width, checkModelPoint1.y);
+				Point checkModelPoint3 = new Point(checkModelPoint1.x + modelDimension.width, checkModelPoint1.y + modelDimension.height);
+				Point checkModelPoint4 = new Point(checkModelPoint1.x, checkModelPoint1.y + modelDimension.height);
 				switch(direction) {
 				case UP:
-					model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
-					if(isPointInModel(tempPoint3, model) || isPointInModel(tempPoint4, model)) {
+					if(isPointInModel(new Point(checkModelPoint1.x, checkModelPoint1.y - moveSize), tempModel) 
+							|| isPointInModel(new Point(checkModelPoint2.x, checkModelPoint2.y - moveSize), tempModel)) {
 						collisionModel = tempModel;
+						checkModel.setPoint(new Point(checkModel.getPoint().x, collisionModel.getPoint().y + collisionModel.getDimension().height + 1));
 					} 
-					model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
 					break;
 				case DOWN:
-					model.setPoint(new Point(model.getPoint().x, model.getPoint().y + model.getMoveSize()));
-					if(isPointInModel(tempPoint1, model) || isPointInModel(tempPoint2, model)) {
+					if(isPointInModel(new Point(checkModelPoint3.x, checkModelPoint3.y + moveSize), tempModel) 
+							|| isPointInModel(new Point(checkModelPoint4.x, checkModelPoint4.y + moveSize), tempModel)) {
 						collisionModel = tempModel;
+						checkModel.setPoint(new Point(checkModel.getPoint().x, collisionModel.getPoint().y - checkModel.getDimension().height - 1));
 					} 
-					model.setPoint(new Point(model.getPoint().x, model.getPoint().y - model.getMoveSize()));
 					break;
 				case LEFT:
-					model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
-					if(isPointInModel(tempPoint2, model) || isPointInModel(tempPoint3, model)) {
+					if(isPointInModel(new Point(checkModelPoint1.x - moveSize, checkModelPoint1.y), tempModel) 
+							|| isPointInModel(new Point(checkModelPoint4.x - moveSize, checkModelPoint4.y), tempModel)) {
 						collisionModel = tempModel;
+						checkModel.setPoint(new Point(collisionModel.getPoint().x + collisionModel.getDimension().width + 1, checkModel.getPoint().y));
 					} 
-					model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
 					break;
 				case RIGHT:
-					model.setPoint(new Point(model.getPoint().x + model.getMoveSize(), model.getPoint().y));
-					if(isPointInModel(tempPoint1, model) || isPointInModel(tempPoint4, model)) {
+					if(isPointInModel(new Point(checkModelPoint2.x + moveSize, checkModelPoint2.y), tempModel) 
+							|| isPointInModel(new Point(checkModelPoint3.x + moveSize, checkModelPoint3.y), tempModel)) {
 						collisionModel = tempModel;
+						checkModel.setPoint(new Point(collisionModel.getPoint().x - checkModel.getDimension().width - 1, checkModel.getPoint().y));
 					} 
-					model.setPoint(new Point(model.getPoint().x - model.getMoveSize(), model.getPoint().y));
 					break;
 				}
-			}
-			if(collisionModel != null) {
-				return collisionModel;
 			}
 		}
 		return collisionModel;
@@ -260,20 +243,34 @@ public class MyGameUtil {
 	 * @return
 	 */
 	public static boolean modelIsOuterBorder(Model model, DirectionEnum direction) {
-		if(direction == DirectionEnum.LEFT
-				&& model.getPoint().x - model.getMoveSize() < 0) {
-			return true;
-		} else if(direction == DirectionEnum.RIGHT
-				&& model.getPoint().x + model.getMoveSize() > model.getMap().getDimension().width - model.getDimension().width) {
-			model.setPoint(new Point(model.getMap().getDimension().width - model.getDimension().width, model.getPoint().y));
-			return true;
-		} else if(direction == DirectionEnum.UP
+		 if(direction == DirectionEnum.UP
 				&& model.getPoint().y - model.getMoveSize() < 0) {
 			model.setPoint(new Point(model.getPoint().x, 0));
 			return true;
 		} else if(direction == DirectionEnum.DOWN
 				&& model.getPoint().y + model.getMoveSize() > model.getMap().getDimension().height - model.getDimension().height) {
 			model.setPoint(new Point(model.getPoint().x, model.getMap().getDimension().height - model.getDimension().height));
+			return true;
+		} else if(direction == DirectionEnum.LEFT
+				&& model.getPoint().x - model.getMoveSize() < 0) {
+			return true;
+		} else if(direction == DirectionEnum.RIGHT
+				&& model.getPoint().x + model.getMoveSize() > model.getMap().getDimension().width - model.getDimension().width) {
+			model.setPoint(new Point(model.getMap().getDimension().width - model.getDimension().width, model.getPoint().y));
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 根据模型的大小、位置、类型判断两个模型是否为同一个模型
+	 * @param model1
+	 * @param model2
+	 * @return
+	 */
+	public static boolean isSameModel(Model model1, Model model2) {
+		if(model1.getPoint() == model2.getPoint() 
+				&& model1.getDimension() == model2.getDimension()
+				&& model1.getType() == model2.getType()) {
 			return true;
 		}
 		return false;

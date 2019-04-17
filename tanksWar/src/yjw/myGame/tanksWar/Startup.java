@@ -8,8 +8,8 @@ public class Startup {
 	public static void main(String[] args) {
 		//创建主界面并启动游戏规则
 		MainApp mainApp = MainApp.getMainApp();
-		Thread mainThread = new Thread(mainApp);
-		mainThread.start();
+//		Thread mainThread = new Thread(mainApp);
+//		mainThread.start();
 		
 		//初始化游戏界面
 		mainApp.map = mainApp.getMap(mainApp);

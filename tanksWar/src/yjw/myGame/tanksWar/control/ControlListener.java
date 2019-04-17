@@ -3,6 +3,8 @@ package yjw.myGame.tanksWar.control;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 
+import yjw.myGame.tanksWar.model.BulletModel;
+import yjw.myGame.tanksWar.model.Model;
 import yjw.myGame.tanksWar.model.TankModel;
 import yjw.myGame.tanksWar.myEnum.DirectionEnum;
 import yjw.myGame.tanksWar.myEnum.TypeEnum;
@@ -20,131 +22,94 @@ public class ControlListener implements Runnable{
 	/**
 	 * 控制坦克移动
 	 */
-	public void controlTank() {
-		Point point = tank.getPoint();
-		int moveSize = tank.getMoveSize();
-		DirectionEnum direction = tank.getDirection();
-		TypeEnum type = tank.getType();
-		if(type == TypeEnum.FRIEND1) {
-			if(KeyEvent.VK_W == event.getKeyCode()) {
-				direction = DirectionEnum.UP;
-				//坦克是否超出边界或者碰撞到其他model
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.UP)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.UP) == null) {
-					point.y = point.y - moveSize;
-					tank.setPoint(point);
-				}
-			} else if(KeyEvent.VK_S == event.getKeyCode()) {
-				direction = DirectionEnum.DOWN;
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.DOWN)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.DOWN) == null) {
-					point.y = point.y + moveSize;
-					tank.setPoint(point);
-				}
-			} else if(KeyEvent.VK_A == event.getKeyCode()) {
-				direction = DirectionEnum.LEFT;
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.LEFT)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.LEFT) == null) {
-					point.x = point.x - moveSize;
-					tank.setPoint(point);
-				}
-			} else if(KeyEvent.VK_D == event.getKeyCode()) {
-				direction = DirectionEnum.RIGHT;
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.RIGHT)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.RIGHT) == null) {
-					point.x = point.x + moveSize;
-					tank.setPoint(point);
-				}
-			}
-		} else {
-			if(KeyEvent.VK_UP == event.getKeyCode()) {
-				direction = DirectionEnum.UP;
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.UP)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.UP) == null) {
-					point.y = point.y - moveSize;
-					tank.setPoint(point);
-				}
-			} else if(KeyEvent.VK_DOWN == event.getKeyCode()) {
-				direction = DirectionEnum.DOWN;
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.DOWN)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.DOWN) == null) {
-					point.y = point.y + moveSize;
-					tank.setPoint(point);
-				}
-			} else if(KeyEvent.VK_LEFT == event.getKeyCode()) {
-				direction = DirectionEnum.LEFT;
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.LEFT)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.LEFT) == null) {
-					point.x = point.x - moveSize;
-					tank.setPoint(point);
-				}
-			} else if(KeyEvent.VK_RIGHT == event.getKeyCode()) {
-				direction = DirectionEnum.RIGHT;
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.RIGHT)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.RIGHT) == null) {
-					point.x = point.x + moveSize;
-					tank.setPoint(point);
-				}
-			}
+	public void controlTankMove() {
+		DirectionEnum direction = this.tank.getDirection();
+		if(KeyEvent.VK_W == this.event.getKeyCode()
+				|| KeyEvent.VK_UP == this.event.getKeyCode()) {
+			direction = DirectionEnum.UP;
+		} else if(KeyEvent.VK_S == this.event.getKeyCode()
+				|| KeyEvent.VK_DOWN == this.event.getKeyCode()) {
+			direction = DirectionEnum.DOWN;
+		} else if(KeyEvent.VK_A == this.event.getKeyCode()
+				|| KeyEvent.VK_LEFT == this.event.getKeyCode()) {
+			direction = DirectionEnum.LEFT;
+		} else if(KeyEvent.VK_D == this.event.getKeyCode()
+				|| KeyEvent.VK_RIGHT == this.event.getKeyCode()) {
+			direction = DirectionEnum.RIGHT;
 		}
-		tank.setDirection(direction);
-	}
-
-	/**
-	 * 坦克自动移动
-	 */
-	public void autoMove() {
-		Point point = tank.getPoint();
-		int moveSize = tank.getMoveSize();
-		DirectionEnum direction = tank.getDirection();
-		if(tank.isEnemy()) {
-			switch (direction) {
-			case UP:
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.UP)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.UP) == null) {
-					point.y = point.y - moveSize;
-					tank.setPoint(point);
-				} break;
-			case DOWN:
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.DOWN)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.DOWN) == null) {
-					point.y = point.y + moveSize;
-					tank.setPoint(point);
-				} break;
-			case LEFT:
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.LEFT)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.LEFT) == null) {
-					point.x = point.x - moveSize;
-					tank.setPoint(point);
-				} break;
-			case RIGHT:
-				if(!MyGameUtil.modelIsOuterBorder(tank, DirectionEnum.RIGHT)
-						&& MyGameUtil.collisionModel(tank, DirectionEnum.RIGHT) == null) {
-					point.x = point.x + moveSize;
-					tank.setPoint(point);
-				} break;
-			}
-		}
+		this.tank.setDirection(direction);
+		move(direction);
 	}
 	
 	@Override
 	public void run() {
-		synchronized (this) {
-			while (tank.isConMove()) {
+		synchronized(this){
+			while (this.tank.isConMove() && this.tank.isLive()) {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
-				if(tank.isEnemy()) {
-					this.autoMove();
+				if(this.tank.isEnemy()) {
+					move(this.tank.getDirection());
 				} else {
-					this.controlTank();
+					this.controlTankMove();
 				}
 			}
 		}
 	}
 
+	/**
+	 * 坦克朝指定方向移动
+	 * @param tank
+	 * @param direction
+	 */
+	private void move(DirectionEnum direction) {
+		Point point = this.tank.getPoint();
+		int moveSize = this.tank.getMoveSize();
+		boolean isoutBorder = MyGameUtil.modelIsOuterBorder(this.tank, direction);
+		Model collisionModel = MyGameUtil.collisionModel(this.tank, direction);
+		if(!isoutBorder && collisionModel == null) {
+			switch (direction) {
+			case UP:
+				this.tank.setPoint(new Point(point.x, point.y - moveSize));break;
+			case DOWN:
+				this.tank.setPoint(new Point(point.x, point.y + moveSize));break;
+			case LEFT:
+				this.tank.setPoint(new Point(point.x - moveSize, point.y));break;
+			case RIGHT:
+				this.tank.setPoint(new Point(point.x + moveSize, point.y));break;
+			}
+		} else if(collisionModel instanceof BulletModel){
+			BulletModel bullet = (BulletModel) collisionModel;
+			if(this.tank.isEnemy()) {
+				if(tankIsDeath(bullet, this.tank)) {
+					switch(tank.getType()) {
+					case ENEMY1:
+						this.tank.setLive(!tankIsDeath(bullet, this.tank));break;
+					case ENEMY2:
+						this.tank.setType(TypeEnum.ENEMY1);break;
+					case ENEMY3:
+						this.tank.setType(TypeEnum.ENEMY2);break;
+					case ENEMY4:
+						this.tank.setType(TypeEnum.ENEMY3);break;
+					default:break;
+					}
+				}
+			} else {
+				this.tank.setLive(tankIsDeath(bullet, this.tank));
+			}
+		}
+	}
+	
+	private boolean tankIsDeath(BulletModel bullet, TankModel tank) {
+		if((!bullet.isEnemy() && tank.isEnemy())
+				|| (bullet.isEnemy() && !tank.isEnemy())) {
+			return true;
+		}
+		return false;
+	}
+	
 	public void setEvent(KeyEvent event) {
 		this.event = event;
 	}

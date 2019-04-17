@@ -136,7 +136,7 @@ public class MainApp  extends JFrame implements Runnable{
 						}
 					}
 					if(KeyEvent.VK_NUMPAD0 == e.getKeyCode()) {
-						if(mainApp.hero1.getBulletNum() > 0) {
+						if(mainApp.hero2.getBulletNum() > 0) {
 							mainApp.hero2.initBullet(mainApp.map);
 							mainApp.map.add(mainApp.hero2.bullet);
 							Thread hero2Bullet = new Thread(mainApp.hero2.bullet);
@@ -172,16 +172,7 @@ public class MainApp  extends JFrame implements Runnable{
 	
 	@Override
 	public void run() {
-		while(true) {
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			//定时清除游戏界面，并重绘
-			MyGameUtil.removeDeathModel(this);
-			this.repaint();
-		}
+		
 	}
 	
 }

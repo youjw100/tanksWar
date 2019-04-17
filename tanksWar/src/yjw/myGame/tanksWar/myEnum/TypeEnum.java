@@ -3,7 +3,6 @@ package yjw.myGame.tanksWar.myEnum;
 /**
  * 坦克类型
  * 
- * BORDER：游戏边界
  * FRIEND：我方坦克（两种类型）
  * ENEMY：敌方坦克（四种类型）
  * BULLET：子弹

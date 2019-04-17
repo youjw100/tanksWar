@@ -1,7 +1,5 @@
 package yjw.myGame.tanksWar.model;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -27,7 +25,7 @@ public class BulletModel extends Model implements Runnable{
 	
 	public BulletModel(TankModel tank, Map map) {
 		
-		super(null, new Dimension(tank.getDimension().width/4, tank.getDimension().height/4), TypeEnum.BULLET, map, tank.getDimension().width/4);
+		super(new Point(), new Dimension(tank.getDimension().width/4, tank.getDimension().height/4), TypeEnum.BULLET, map, tank.getDimension().width/4);
 		
 		this.tank = tank;
 		
@@ -55,24 +53,29 @@ public class BulletModel extends Model implements Runnable{
 	@Override
 	public void run() {
 		while(this.isLive()) {
-			//如果子弹超出地图范围，则判定子弹死亡
-			if(this.point.x < -this.dimension.width || this.point.x > this.map.getDimension().getWidth() + this.dimension.width
-					|| this.point.y < -this.dimension.height || this.point.y > this.map.getDimension().getHeight() + this.dimension.height) {
-				this.setLive(false);
-				this.tank.setBulletNum(this.tank.getBulletNum() + 1);
-			}
-			Model collisionModel = MyGameUtil.collisionModel(this, this.direction);
-			if(collisionModel != null) {
-				this.setLive(false);
-				this.tank.setBulletNum(this.tank.getBulletNum() + 1);
-				if(collisionModel instanceof TankModel) {
-					
-				}
-			}
+			
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			}
+			
+			//如果子弹超出地图范围，则判定子弹死亡
+			Model collisionModel = MyGameUtil.collisionModel(this, this.direction);
+			if(this.point.x < -this.dimension.width || this.point.x > this.map.getDimension().getWidth() + this.dimension.width
+					|| this.point.y < -this.dimension.height || this.point.y > this.map.getDimension().getHeight() + this.dimension.height) {
+				this.setLive(false);
+				this.map.remove(this);
+				this.tank.setBulletNum(this.tank.getBulletNum() + 1);
+			} 
+			//如果子弹撞到model
+			if(collisionModel != null) {
+				this.setLive(false);
+				this.map.remove(this);
+				this.tank.setBulletNum(this.tank.getBulletNum() + 1);
+				if(collisionModel instanceof TankModel) {
+					
+				}
 			}
 			switch(direction) {
 			case UP:
